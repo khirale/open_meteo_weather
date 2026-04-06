@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -18,10 +18,12 @@ from .const import (
     HOURLY_HOURS,
     UPDATE_INTERVAL_HOURS,
     WMO_CODES,
+    wmo_to_fr,
 )
 
 _LOGGER = logging.getLogger(__name__)
 
+# Open-Meteo field names
 _CURRENT_FIELDS = (
     "temperature_2m",
     "relative_humidity_2m",
@@ -56,6 +58,7 @@ _DAILY_FIELDS = (
 
 
 def _find_current_hour_index(times: list[str]) -> int:
+    """Return the index in the hourly time array matching the current local hour."""
     now_str = datetime.now().strftime("%Y-%m-%dT%H:00")
     for i, t in enumerate(times):
         if t == now_str:
@@ -64,6 +67,7 @@ def _find_current_hour_index(times: list[str]) -> int:
 
 
 def _build_hourly_dict(values: list, start_idx: int) -> dict[str, float | None]:
+    """Build {h0: v, h1: v, ...} dict from a list starting at start_idx."""
     return {
         f"h{i}": values[start_idx + i]
         for i in range(HOURLY_HOURS)
@@ -72,16 +76,19 @@ def _build_hourly_dict(values: list, start_idx: int) -> dict[str, float | None]:
 
 
 def _build_daily_dict(values: list) -> dict[str, float | None]:
+    """Build {j0: v, j1: v, ...} dict from a list."""
     return {f"j{i}": values[i] for i in range(min(FORECAST_DAYS, len(values)))}
 
 
-def _map_wmo(code: int | None) -> str:
+def _map_wmo_key(code: int | None) -> str:
+    """Map a WMO code to its technical key string."""
     if code is None:
         return "unknown"
     return WMO_CODES.get(int(code), "unknown")
 
 
 class WeatherCoordinator(DataUpdateCoordinator):
+    """Coordinator that fetches data from the Open-Meteo Forecast API."""
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
         super().__init__(
@@ -94,6 +101,7 @@ class WeatherCoordinator(DataUpdateCoordinator):
         self._longitude: float = entry.data[CONF_LONGITUDE]
 
     async def _async_update_data(self) -> dict:
+        """Fetch and parse forecast data."""
         session = async_get_clientsession(self.hass)
         params = {
             "latitude": self._latitude,
@@ -115,6 +123,11 @@ class WeatherCoordinator(DataUpdateCoordinator):
 
         current = raw.get("current", {})
 
+        current_wmo_code = current.get("weather_code")
+        current_condition_key = _map_wmo_key(current_wmo_code)
+        current["condition_label"] = wmo_to_fr(current_condition_key)
+        current["condition_key"] = current_condition_key
+
         hourly_raw = raw.get("hourly", {})
         times = hourly_raw.get("time", [])
         idx = _find_current_hour_index(times)
@@ -123,10 +136,9 @@ class WeatherCoordinator(DataUpdateCoordinator):
         for field in _HOURLY_FIELDS:
             hourly[field] = _build_hourly_dict(hourly_raw.get(field, []), idx)
 
-        # Replace weather_code with mapped condition strings
         wmo_values = hourly_raw.get("weather_code", [])
         hourly["condition"] = {
-            f"h{i}": _map_wmo(wmo_values[idx + i])
+            f"h{i}": wmo_to_fr(_map_wmo_key(wmo_values[idx + i]))
             for i in range(HOURLY_HOURS)
             if idx + i < len(wmo_values)
         }
@@ -136,8 +148,9 @@ class WeatherCoordinator(DataUpdateCoordinator):
         for field in _DAILY_FIELDS:
             daily[field] = _build_daily_dict(daily_raw.get(field, []))
 
+        daily_wmo = daily_raw.get("weather_code", [])
         daily["condition"] = {
-            f"j{i}": _map_wmo(daily_raw.get("weather_code", [])[i] if i < len(daily_raw.get("weather_code", [])) else None)
+            f"j{i}": wmo_to_fr(_map_wmo_key(daily_wmo[i] if i < len(daily_wmo) else None))
             for i in range(FORECAST_DAYS)
         }
 

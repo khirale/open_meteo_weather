@@ -46,6 +46,42 @@ WMO_CODES: dict[int, str] = {
     99: "thunderstorm_heavy_hail",
 }
 
+WMO_LABELS_FR: dict[str, str] = {
+    "clear_sky":                "Ciel dégagé",
+    "mainly_clear":             "Principalement dégagé",
+    "partly_cloudy":            "Partiellement nuageux",
+    "overcast":                 "Couvert",
+    "fog":                      "Brouillard",
+    "icy_fog":                  "Brouillard givrant",
+    "light_drizzle":            "Bruine légère",
+    "moderate_drizzle":         "Bruine modérée",
+    "heavy_drizzle":            "Bruine forte",
+    "light_freezing_drizzle":   "Bruine verglaçante légère",
+    "heavy_freezing_drizzle":   "Bruine verglaçante forte",
+    "light_rain":               "Pluie légère",
+    "moderate_rain":            "Pluie modérée",
+    "heavy_rain":               "Pluie forte",
+    "light_freezing_rain":      "Pluie verglaçante légère",
+    "heavy_freezing_rain":      "Pluie verglaçante forte",
+    "light_snow":               "Neige légère",
+    "moderate_snow":            "Neige modérée",
+    "heavy_snow":               "Neige forte",
+    "snow_grains":              "Grésil",
+    "light_showers":            "Averses légères",
+    "moderate_showers":         "Averses modérées",
+    "heavy_showers":            "Averses fortes",
+    "light_snow_showers":       "Averses de neige légères",
+    "heavy_snow_showers":       "Averses de neige fortes",
+    "thunderstorm":             "Orage",
+    "thunderstorm_light_hail":  "Orage avec grêle légère",
+    "thunderstorm_heavy_hail":  "Orage avec grêle forte",
+    "unknown":                  "Inconnu",
+}
+
+
+def wmo_to_fr(key: str) -> str:
+    """Return the French label for a WMO condition key."""
+    return WMO_LABELS_FR.get(key, key)
 
 AQI_CATEGORIES: dict[str, tuple[int, int]] = {
     "good":      (0,   20),
@@ -65,7 +101,6 @@ def get_aqi_category(value: float | None) -> str:
         if low <= value <= high:
             return category
     return "extremely_poor"
-
 
 SENSOR_TEMPERATURE             = "temperature"
 SENSOR_FEELS_LIKE              = "feels_like"
