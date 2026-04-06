@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Open-Meteo Weather",
+        "description": "Choisissez comment définir la localisation pour les données météo.",
+        "data": {
+          "use_home": "Utiliser la zone domicile de Home Assistant"
+        }
+      },
+      "manual": {
+        "title": "Coordonnées GPS manuelles",
+        "description": "Entrez la latitude et la longitude de votre emplacement.",
+        "data": {
+          "latitude": "Latitude",
+          "longitude": "Longitude"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Cet emplacement est déjà configuré."
+    },
+    "error": {
+      "invalid_coordinates": "Coordonnées invalides."
+    }
+  }
+}

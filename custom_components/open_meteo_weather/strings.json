@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Open-Meteo Weather",
+        "description": "Choose how to set the location for weather data.",
+        "data": {
+          "use_home": "Use Home Assistant home zone"
+        }
+      },
+      "manual": {
+        "title": "Manual GPS coordinates",
+        "description": "Enter the latitude and longitude for your location.",
+        "data": {
+          "latitude": "Latitude",
+          "longitude": "Longitude"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This location is already configured."
+    },
+    "error": {
+      "invalid_coordinates": "Invalid coordinates."
+    }
+  }
+}
