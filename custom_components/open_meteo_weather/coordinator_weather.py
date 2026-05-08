@@ -54,6 +54,8 @@ _DAILY_FIELDS = (
     "weather_code",
     "uv_index_max",
     "wind_speed_10m_max",
+    "sunrise",
+    "sunset",
 )
 
 

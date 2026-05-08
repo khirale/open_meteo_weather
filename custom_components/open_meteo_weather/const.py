@@ -113,6 +113,8 @@ SENSOR_PRESSURE                = "pressure"
 SENSOR_UV_INDEX                = "uv_index"
 SENSOR_SOLAR_RADIATION         = "solar_radiation"
 SENSOR_CONDITION               = "condition"
+SENSOR_SUNRISE                 = "sunrise"
+SENSOR_SUNSET                  = "sunset"
 
 SENSOR_HOURLY_TEMPERATURE              = "hourly_temperature"
 SENSOR_HOURLY_PRECIPITATION_PROBABILITY = "hourly_precipitation_probability"

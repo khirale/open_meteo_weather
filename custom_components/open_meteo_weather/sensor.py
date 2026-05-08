@@ -28,6 +28,8 @@ from .const import (
     SENSOR_AQI,
     SENSOR_CARBON_MONOXIDE,
     SENSOR_CONDITION,
+    SENSOR_SUNRISE,
+    SENSOR_SUNSET,
     SENSOR_DAILY_CONDITION,
     SENSOR_DAILY_PRECIPITATION,
     SENSOR_DAILY_TEMPERATURE_MAX,
@@ -159,6 +161,26 @@ WEATHER_SENSORS: tuple[OpenMeteoSensorDescription, ...] = (
         name="Condition météo",
         icon="mdi:weather-cloudy",
         value_fn=lambda d: d["hourly"].get("condition", {}).get("h0"),
+    ),
+    OpenMeteoSensorDescription(
+        key=SENSOR_SUNRISE,
+        name="Lever du soleil",
+        icon="mdi:weather-sunset-up",
+        value_fn=lambda d: d["daily"].get("sunrise", {}).get("j0", "").split("T")[-1][:5] if d["daily"].get("sunrise", {}).get("j0") else None,
+        attributes_fn=lambda d: {
+            k: v.split("T")[-1][:5] if v else None
+            for k, v in d["daily"].get("sunrise", {}).items()
+        },
+    ),
+    OpenMeteoSensorDescription(
+        key=SENSOR_SUNSET,
+        name="Coucher du soleil",
+        icon="mdi:weather-sunset-down",
+        value_fn=lambda d: d["daily"].get("sunset", {}).get("j0", "").split("T")[-1][:5] if d["daily"].get("sunset", {}).get("j0") else None,
+        attributes_fn=lambda d: {
+            k: v.split("T")[-1][:5] if v else None
+            for k, v in d["daily"].get("sunset", {}).items()
+        },
     ),
 
     OpenMeteoSensorDescription(
