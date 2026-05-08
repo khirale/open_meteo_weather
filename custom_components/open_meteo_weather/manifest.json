@@ -1,7 +1,7 @@
 {
   "domain": "open_meteo_weather",
   "name": "Open-Meteo Weather",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "config_flow": true,
   "documentation": "https://github.com/yourusername/open_meteo_weather",
   "issue_tracker": "https://github.com/yourusername/open_meteo_weather/issues",
