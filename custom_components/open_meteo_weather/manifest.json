@@ -7,7 +7,7 @@
   "issue_tracker": "https://github.com/yourusername/open_meteo_weather/issues",
   "requirements": [],
   "dependencies": [],
-  "codeowners": [],
+  "codeowners": ["@khirale"],
   "iot_class": "cloud_polling",
-  "homeassistant": "2024.1.0"
+  "homeassistant": "2026.1.0"
 }
